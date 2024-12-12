@@ -70,5 +70,5 @@ Veuillez prendre en compte que les scripts ne sont pas encore en version "stable
 
 ## Captures d'Écrans
 
-[Imgur](https://imgur.com/t6bm2Zi)
+![Imgur](https://imgur.com/t6bm2Zi)
 

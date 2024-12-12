@@ -70,5 +70,5 @@ Veuillez prendre en compte que les scripts ne sont pas encore en version "stable
 
 ## Captures d'Écrans
 
-![Script d'installation de Paper 1.16.5](https://imgur.com/a/s6jssmm)
+[Imgur](https://imgur.com/t6bm2Zi)
 

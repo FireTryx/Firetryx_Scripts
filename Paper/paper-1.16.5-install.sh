@@ -118,20 +118,19 @@ afficher_dossiers() {
         *)
             # Navigate into the selected folder
             selected_folder=$(echo "$selected_option" | awk '{print $NF}')
-            ;;
 
-        if [ -d "$selected_folder" ]; then
-            cd "$selected_folder" && echo -e "${GREEN}Monté dans : $(pwd)${NC}"
-			afficher_dossiers  # Refresh the content
+        	if [ -d "$selected_folder" ]; then
+            	cd "$selected_folder" && echo -e "${GREEN}Monté dans : $(pwd)${NC}"
+				afficher_dossiers  # Refresh the content
 
-        else
-            # If the foler is invalid, restart FZF
-            echo -e "${RED}Dossier invalide, veuillez réessayer.${NC}"
+        	else
+            	# If the foler is invalid, restart FZF
+            	echo -e "${RED}Dossier invalide, veuillez réessayer.${NC}"
 
-	        afficher_dossiers  # Refresh folders after error
-        fi
-        ;;
-
+	        	afficher_dossiers  # Refresh folders after error
+        	fi
+        	
+        	;;
     esac
 }
 

@@ -99,7 +99,7 @@ case $input in
 
     1)
         clear
-        echo -e "${GREEN}Installation de Paper 1.16.5${NC}"
+        echo -e "${GREEN}Installation de Paper 1.16.5 ...${NC}"
 
         # Verification and installation of Java
         check_java_version
@@ -175,7 +175,7 @@ case $input in
 
 
         # Installation of Paper 1.16.5 Build 794
-        echo -e "${GREEN}Téléchargement de Paper 1.16.5 Build 794 dans '$install_folder'${NC}"
+        echo -e "${GREEN}Téléchargement de Paper 1.16.5 Build 794 dans '$install_folder' ...${NC}"
         cd $install_folder
 
         sudo rm -r *
@@ -206,14 +206,14 @@ case $input in
 
 		# Finish installation
 		clear
-		echo -e "${GREEN}Finalisation de l'installation${NC}"
+		echo -e "${GREEN}Finalisation de l'installation ...${NC}"
 
-		# Rendre le script exécutable
+		# Make file executable
 		chmod +x start.sh
 
-		# Assurez-vous que tous les fichiers et dossiers appartiennent à l'utilisateur qui a lancé le script
+		# 
 		if [ -n "$SUDO_USER" ]; then
-		    chown -R "$SUDO_USER:$SUDO_USER" . # Set user owner of the folder & files
+		    chown -R "$SUDO_USER:$SUDO_USER" . # Set user owner to the user who executed the script
 		else
 		    echo -e "${RED}Erreur : Impossible de récupérer l'utilisateur ayant lancé le script.${NC}"
 		    exit 1
@@ -226,7 +226,8 @@ case $input in
 		echo -e ""
 		echo -e "  ${GREEN}./start.sh ${NC}"
 		echo -e ""
-		echo -e "${YELLOW}Avertissement ! N'installez pas deux fois Paper 1.16.5 dans le même dossier, cela pourrait engendrer quelques erreurs${NC}"
+		echo -e "${LIGHT_BLUE}Pour récupérer votre IP locale et publique, exécutez à nouveau le script, et choisissez l'option 4.${NC}"
+		echo -e "${YELLOW}Avertissement ! N'installez pas deux fois Paper 1.16.5 dans le même dossier, cela pourrait engendrer quelques erreurs.${NC}"
 		echo -e ""
 		echo -e "${LIGHT_BLUE}Merci d'avoir utilisé le script d'installation de serveur Paper 1.16.5 de FireTryx !${NC}"
 		echo -e ""
@@ -244,7 +245,24 @@ case $input in
         ;;
 
     4)
-        # Placeholder pour l'option 4
+		# Clear the screen
+		clear
+		
+		# Get the private IP
+		private_ip=$(hostname -I | awk '{print $1}')
+
+		# Get the public IP
+		public_ip=$(curl -4 -s https://ifconfig.me/)
+
+        echo -e "${LIGHT_BLUE}Voici vos adresses IP.${NC}"
+        echo -e ""
+        echo -e "  IP Privée : ${GREEN}${private_ip}${NC}"
+        echo -e "  IP Publique : ${GREEN}${public_ip}${NC}"
+        echo -e ""
+		echo -e "${LIGHT_BLUE}Merci d'avoir utilisé le script d'installation de serveur Paper 1.16.5 de FireTryx !${NC}"
+		echo -e ""
+
+		exit
         ;;
 
     5)

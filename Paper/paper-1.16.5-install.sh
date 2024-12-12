@@ -58,6 +58,83 @@ check_java_version() {
     fi
 }
 
+# Select installation folder
+afficher_dossiers() {
+
+    # Clear
+    clear
+
+    # Actual folder
+    echo -e "${YELLOW}Dossier actuel : $(pwd)${NC}"
+
+   # Content inside of the folder
+    echo -e "${YELLOW}Contenu du répertoire :${NC}"
+
+    # Files inside the folder
+    options=()
+    while IFS= read -r line; do
+        options+=("$line")
+    done < <(ls -l --time=mtime --color=auto | awk '$1 ~ /^d/ {printf "%-12s > %s\n", $6"-"$7"-"$8, $9}')
+
+    # Navigation options
+    options+=("Créer un nouveau dossier")
+    options+=("Monter d'un niveau")
+    options+=("Sélectionner ce dossier")
+    options+=("Annuler")  # Cancel to stop the script
+
+    # FZF
+    selected_option=$(printf "%s\n" "${options[@]}" | fzf --ansi --preview "echo {}" --height 20)
+
+    # Options
+    case $selected_option in
+
+        "Créer un nouveau dossier")
+            # Create a new folder
+            read -p "Entrez le nom du nouveau dossier : " new_folder
+            mkdir -p "$new_folder" && echo -e "${GREEN}Dossier '$new_folder' créé.${NC}"
+            cd "$new_folder"
+            afficher_dossiers  # Refresh the content
+            ;;
+
+        "Monter d'un niveau")
+            # Monter d'un niveau
+            cd ../ && echo -e "${GREEN}Monté vers : $(pwd)${NC}"
+            afficher_dossiers  # Refresh the content
+            ;;
+
+        "Sélectionner ce dossier")
+            # Select the installation folder
+            clear
+            install_folder=$(pwd)
+            echo -e "${GREEN}Dossier final sélectionné : $install_folder${NC}"
+            ;;
+
+        "Annuler")
+            # Stop the script
+            echo -e "${RED}Script annulé.${NC}"
+            exit 0
+            ;;
+
+        *)
+            # Navigate into the selected folder
+            selected_folder=$(echo "$selected_option" | awk '{print $NF}')
+            ;;
+
+        if [ -d "$selected_folder" ]; then
+            cd "$selected_folder" && echo -e "${GREEN}Monté dans : $(pwd)${NC}"
+			afficher_dossiers  # Refresh the content
+
+        else
+            # If the foler is invalid, restart FZF
+            echo -e "${RED}Dossier invalide, veuillez réessayer.${NC}"
+
+	        afficher_dossiers  # Refresh folders after error
+        fi
+        ;;
+
+    esac
+}
+
 ram_selection() {
 
 	case $1 in
@@ -103,72 +180,6 @@ case $input in
 
         # Verification and installation of Java
         check_java_version
-
-        # Select installation folder
-		afficher_dossiers() {
-		    # Clear
-		    clear
-
-		    # Actual folder
-		    echo -e "${YELLOW}Dossier actuel : $(pwd)${NC}"
-
-		    # Content inside of the folder
-		    echo -e "${YELLOW}Contenu du répertoire :${NC}"
-
-		    # Files inside the folder
-		    options=()
-		    while IFS= read -r line; do
-		        options+=("$line")
-		    done < <(ls -l --time=mtime --color=auto | awk '$1 ~ /^d/ {printf "%-12s > %s\n", $6"-"$7"-"$8, $9}')
-
-		    # Navigation options
-		    options+=("Créer un nouveau dossier")
-		    options+=("Monter d'un niveau")
-		    options+=("Sélectionner ce dossier")
-		    options+=("Annuler")  # Cancel to stop the script
-
-		    # FZF
-		    selected_option=$(printf "%s\n" "${options[@]}" | fzf --ansi --preview "echo {}" --height 20)
-
-		    # Options
-		    case $selected_option in
-		        "Créer un nouveau dossier")
-		            # Create a new folder
-		            read -p "Entrez le nom du nouveau dossier : " new_folder
-		            mkdir -p "$new_folder" && echo -e "${GREEN}Dossier '$new_folder' créé.${NC}"
-		            cd "$new_folder"
-		            afficher_dossiers  # Refresh the content
-		            ;;
-		        "Monter d'un niveau")
-		            # Monter d'un niveau
-		            cd ../ && echo -e "${GREEN}Monté vers : $(pwd)${NC}"
-		            afficher_dossiers  # Refresh the content
-		            ;;
-		        "Sélectionner ce dossier")
-		            # Select the installation folder
-		            clear
-		            install_folder=$(pwd)
-		            echo -e "${GREEN}Dossier final sélectionné : $install_folder${NC}"
-		            ;;
-		        "Annuler")
-		            # Stop the script
-		            echo -e "${RED}Script annulé.${NC}"
-		            exit 0
-		            ;;
-		        *)
-		            # Navigate into the selected folder
-		            selected_folder=$(echo "$selected_option" | awk '{print $NF}')
-		            if [ -d "$selected_folder" ]; then
-		                cd "$selected_folder" && echo -e "${GREEN}Monté dans : $(pwd)${NC}"
-		                afficher_dossiers  # Refresh the content
-		            else
-		                # If the foler is invalid, restart FZF
-		                echo -e "${RED}Dossier invalide, veuillez réessayer.${NC}"
-		                afficher_dossiers  # Refresh folders after error
-		            fi
-		            ;;
-		    esac
-		}
 
 		# Show folders function call
 		afficher_dossiers
@@ -247,7 +258,7 @@ case $input in
     4)
 		# Clear the screen
 		clear
-		
+
 		# Get the private IP
 		private_ip=$(hostname -I | awk '{print $1}')
 

@@ -66,7 +66,9 @@ afficher_dossiers() {
 
     # Actual folder
     echo -e "${YELLOW}Dossier actuel : $(pwd)${NC}"
-
+    echo -e ""
+    echo -e "${RED}Attention  Le dossier sélectionné sera completement vidé. Assurez-vous d'avoir sauvegarder le contenu du dossier s'il était utilisé avant.${NC}"
+    echo -e ""
    # Content inside of the folder
     echo -e "${YELLOW}Contenu du répertoire :${NC}"
 
@@ -163,6 +165,9 @@ echo -e "${LIGHT_BLUE}  |_|    |_|_|  \___|_|_|   \__, /_/\_\  |_____/ \___|_|  
 echo -e "${LIGHT_BLUE}                             __/ |                          | |             "
 echo -e "${LIGHT_BLUE}                            |___/                           |_|             "
 echo -e "${NC}"
+echo -e ""
+echo -e " ${GREEN}Bienvenue ${SUDO_USER} ! Merci de porter de l'importance à FireTryx Scripts. ${NC}"
+echo -e ""
 echo -e "* [1] Installer un serveur Paper 1.16.5 (Latest build: paper-1.16.5-794.jar)"
 echo -e "* [2] Récupérer une base de serveur Paper 1.16.5"
 echo -e "* [3] Paramétrer un serveur Paper 1.16.5"
@@ -251,7 +256,113 @@ case $input in
         ;;
 
     3)
-        # Placeholder pour l'option 3
+		# Clear the screen
+		clear
+
+		# Select folder where Paper is installed
+        afficher_dossiers
+
+        # Change options
+        echo -e "${GREEN}Modifications des options de configuration Paper dans '$install_folder' ...${NC}"
+        cd $install_folder
+
+        # Options
+
+        # spigot.yml
+        read -p "Serveur sur un proxy BungeeCord (oui/non) : " bungeecord
+		if [[ "$bungeecord" == "oui" ]]; then
+		    sed -i "s/^\s*bungeecord: .*/  bungeecord: true/" spigot.yml
+		else
+		    sed -i "s/^\s*bungeecord: .*/  bungeecord: false/" spigot.yml
+		fi
+
+		# bukkit.yml
+		clear
+		echo -e "${GREEN}Modifications des options de configuration Bukkit dans '$install_folder' ...${NC}"
+        cd $install_folder
+
+        # Options
+        read -p "Autoriser l'END (oui/non) : " allow_end
+        if [[ "$allow_end" == "oui" ]]; then
+		    sed -i "s/^\s*allow-end: .*/allow-end: true/" bukkit.yml
+		else
+		    sed -i "s/^\s*allow-end: .*/allow-end: false/" bukkit.yml
+		fi
+
+		# server.properties
+		clear
+        echo -e "${GREEN}Modifications des options de préférence Paper dans '$install_folder' ...${NC}"
+
+		read -p "Serveur Crack/relié Proxy (online-mode) (oui/non) : " online_mode
+        if [[ "$online_mode" == "oui" ]]; then
+		    sed -i "s/^online-mode: .*/online-mode: true/" server.properties
+		else
+		    sed -i "s/^online-mode: .*/online-mode: false/" server.properties
+		fi
+
+		echo -e ""
+		read -p "Autoriser le NETHER (allow-nether) (oui/non) : " nether
+        if [[ "$nether" == "oui" ]]; then
+		    sed -i "s/^allow-nether: .*/allow-nether: true/" server.properties
+		else
+		    sed -i "s/^allow-nether: .*/allow-nether: false/" server.properties
+		fi
+
+		echo -e ""
+		read -p "PvP (pvp) (oui/non) : " pvp
+        if [[ "$pvp" == "oui" ]]; then
+		    sed -i "s/^pvp: .*/pvp: true/" server.properties
+		else
+		    sed -i "s/^pvp: .*/pvp: false/" server.properties
+		fi
+
+		echo -e ""
+		read -p "Port du serveur (25565) : " server_port
+		if [[ -z "$server_port" ]]; then
+		    server_port=25565
+		fi
+		sed -i "s/^server-port=[0-9]*/server-port=$server_port/" server.properties
+
+		echo -e ""
+		read -p "Joueurs Maximum (20) : " max_players
+		if [[ -z "$max_players" ]]; then
+		    max_players=20
+		fi
+		sed -i "s/^max-players=[0-9]*/max-players=$max_players/" server.properties
+
+		echo -e ""
+		read -p "URL du resource-pack (laisser vide pour ne pas en utiliser) : " resource_pack_url
+
+		if [[ -z "$resource_pack_url" ]]; then
+		    sed -i "/^resource-pack:/d" server.properties
+		    sed -i "/^resource-pack-sha1:/d" server.properties
+		else
+		    sed -i "s/^resource-pack=.*/resource-pack=$resource_pack_url/" server.properties
+		    if ! grep -q "^resource-pack=" server.properties; then
+		        echo "resource-pack=$resource_pack_url" >> server.properties
+		    fi
+
+		    read -p "SHA1 du resource-pack (laisser vide si vous n'en avez pas) : " resource_pack_sha1
+
+		    if [[ -n "$resource_pack_sha1" ]]; then
+		        sed -i "s/^resource-pack-sha1=.*/resource-pack-sha1=$resource_pack_sha1/" server.properties
+		        if ! grep -q "^resource-pack-sha1=" server.properties; then
+		            echo "resource-pack-sha1=$resource_pack_sha1" >> server.properties
+		        fi
+		    else
+		        sed -i "/^resource-pack-sha1:/d" server.properties
+		    fi
+		fi
+
+		# Clear
+		clear
+
+		echo -e "${GREEN}Les modifications ont été apportés aux fichiers de configuration.${NC}"
+        echo -e ""
+		echo -e "${LIGHT_BLUE}Merci d'avoir utilisé le script d'installation de serveur Paper 1.16.5 de FireTryx !${NC}"
+		echo -e ""
+		
+		exit
         ;;
 
     4)

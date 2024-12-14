@@ -13,7 +13,7 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-sudo apt-get install fzf wget git
+sudo apt-get install fzf wget git unzip
 
 # Java Installation function
 java_installation() {
@@ -248,11 +248,37 @@ case $input in
 		echo -e ""
 
 		exit
-        # 
         ;;
 
     2)
-        # Placeholder pour l'option 2
+		# Clear the screen
+		clear
+
+		# Select installation folder
+		afficher_dossiers
+
+		# Get the Paper 1.16.5 base
+		downgit_url="https://downgit.github.io/#/home?url=https://github.com/FireTryx/Firetryx_Scripts/tree/development/Paper/Base_serveurs/1.16.5"
+
+		# Télécharger le fichier ZIP généré par DownGit
+		output_file="server_base-firetryx_script-1.16.5.zip"
+		echo -e "${GREEN}Téléchargement en cours...${NC}"
+		wget -O "$output_file" "$downgit_url"
+
+		# Vérifier si le téléchargement a réussi
+		if [[ $? -eq 0 ]]; then
+		    echo -e "${GREEN}Téléchargement terminé : $output_file${NC}"
+		else
+		    echo -e "${GREEN}Erreur lors du téléchargement.${NC}"
+		    exit 1
+		fi
+
+		# Extraire le fichier ZIP
+		read -p "Voulez-vous extraire le fichier ZIP ? (oui/non) : " extract
+		if [[ "$extract" == "oui" ]]; then
+		    unzip "$output_file"
+		    echo -e "${GREEN}Fichiers extraits dans le dossier.${NC}"
+		fi
         ;;
 
     3)

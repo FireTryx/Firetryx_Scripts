@@ -181,7 +181,7 @@ read -p "Choisissez une option (1-5): " input
 
 case $input in
 
-    1)
+	1)
 		clear
 		echo -e "${GREEN}Installation de Paper 1.16.5 ...${NC}"
 
@@ -265,7 +265,7 @@ case $input in
 
 
 		# Get the Paper 1.16.5 base
-		download_url="https://media.githubusercontent.com/media/FireTryx/Firetryx_Scripts/refs/heads/development/Paper/Base_serveurs/1.16.5.zip?download=true"
+		download_url="https://media.githubusercontent.com/media/FireTryx/Firetryx_Scripts/refs/heads/development/Paper/Base_serveurs/1.16.5/1.16.5.zip?download=true"
 
 		# Télécharger le fichier ZIP généré par DownGit
 		output_file="server_base-firetryx_script-1.16.5.zip"
@@ -279,6 +279,15 @@ case $input in
 			unzip "$output_file"
 			echo -e "${GREEN}Fichiers extraits dans le dossier.${NC}"
 		fi
+
+		# Change permissions 
+		if [ -n "$SUDO_USER" ]; then
+			chown -R "$SUDO_USER:$SUDO_USER" . # Set user owner to the user who executed the script
+		else
+			echo -e "${RED}Erreur : Impossible de récupérer l'utilisateur ayant lancé le script.${NC}"
+			exit 1
+		fi
+		
 		;;
 
 	3)

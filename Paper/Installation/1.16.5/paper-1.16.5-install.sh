@@ -171,7 +171,7 @@ echo -e ""
 echo -e "* [1] Installer un serveur Paper 1.16.5 (Latest build: paper-1.16.5-794.jar)"
 echo -e "* [2] Récupérer une base de serveur Paper 1.16.5"
 echo -e "* [3] Paramétrer un serveur Paper 1.16.5"
-echo -e "* [4] IP Privée & IP Statique"
+echo -e "* [4] IP Privée & IP Publique"
 echo -e "* [5] Quitter"
 
 read -p "Choisissez une option (1-5): " input
@@ -257,21 +257,18 @@ case $input in
 		# Select installation folder
 		afficher_dossiers
 
+		cd $install_folder
+
+        sudo rm -r *
+
+
 		# Get the Paper 1.16.5 base
-		downgit_url="https://downgit.github.io/#/home?url=https://github.com/FireTryx/Firetryx_Scripts/tree/development/Paper/Base_serveurs/1.16.5"
+		download_url="https://media.githubusercontent.com/media/FireTryx/Firetryx_Scripts/refs/heads/development/Paper/Base_serveurs/1.16.5.zip?download=true"
 
 		# Télécharger le fichier ZIP généré par DownGit
 		output_file="server_base-firetryx_script-1.16.5.zip"
 		echo -e "${GREEN}Téléchargement en cours...${NC}"
-		wget -O "$output_file" "$downgit_url"
-
-		# Vérifier si le téléchargement a réussi
-		if [[ $? -eq 0 ]]; then
-		    echo -e "${GREEN}Téléchargement terminé : $output_file${NC}"
-		else
-		    echo -e "${GREEN}Erreur lors du téléchargement.${NC}"
-		    exit 1
-		fi
+		wget -O "$output_file" "$download_url"
 
 		# Extraire le fichier ZIP
 		read -p "Voulez-vous extraire le fichier ZIP ? (oui/non) : " extract
@@ -298,7 +295,7 @@ case $input in
         read -p "Serveur sur un proxy BungeeCord (oui/non) : " bungeecord
 		if [[ "$bungeecord" == "oui" ]]; then
 		    sed -i "s/^\s*bungeecord: .*/  bungeecord: true/" spigot.yml
-		else
+		elif [[ "$bungeecord" == "non" ]]; then
 		    sed -i "s/^\s*bungeecord: .*/  bungeecord: false/" spigot.yml
 		fi
 
@@ -311,7 +308,7 @@ case $input in
         read -p "Autoriser l'END (oui/non) : " allow_end
         if [[ "$allow_end" == "oui" ]]; then
 		    sed -i "s/^\s*allow-end: .*/allow-end: true/" bukkit.yml
-		else
+		elif [[ "$allow_end" == "non" ]]; then
 		    sed -i "s/^\s*allow-end: .*/allow-end: false/" bukkit.yml
 		fi
 
@@ -321,25 +318,25 @@ case $input in
 
 		read -p "Serveur Crack/relié Proxy (online-mode) (oui/non) : " online_mode
         if [[ "$online_mode" == "oui" ]]; then
-		    sed -i "s/^online-mode: .*/online-mode: true/" server.properties
-		else
-		    sed -i "s/^online-mode: .*/online-mode: false/" server.properties
+		    sed -i "s/^online-mode=.*/online-mode=false/" server.properties
+		elif [[ "$online_mode" == "non" ]]; then
+		    sed -i "s/^online-mode=.*/online-mode=true/" server.properties
 		fi
 
 		echo -e ""
 		read -p "Autoriser le NETHER (allow-nether) (oui/non) : " nether
         if [[ "$nether" == "oui" ]]; then
-		    sed -i "s/^allow-nether: .*/allow-nether: true/" server.properties
-		else
-		    sed -i "s/^allow-nether: .*/allow-nether: false/" server.properties
+		    sed -i "s/^allow-nether=.*/allow-nether=true/" server.properties
+		elif [[ "$nether" == "non" ]]; then
+		    sed -i "s/^allow-nether=.*/allow-nether=false/" server.properties
 		fi
 
 		echo -e ""
 		read -p "PvP (pvp) (oui/non) : " pvp
         if [[ "$pvp" == "oui" ]]; then
-		    sed -i "s/^pvp: .*/pvp: true/" server.properties
-		else
-		    sed -i "s/^pvp: .*/pvp: false/" server.properties
+		    sed -i "s/^pvp=.*/pvp=true/" server.properties
+		elif [[ "$pvp" == "non" ]]; then
+		    sed -i "s/^pvp=.*/pvp=false/" server.properties
 		fi
 
 		echo -e ""
